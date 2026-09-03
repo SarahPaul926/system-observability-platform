@@ -1,5 +1,10 @@
 venv/
+.venv/
 .vscode/
 __pycache__/
 *.pyc
 .env
+*.db
+logs/
+metric_pipeline.csv
+node_modules/
