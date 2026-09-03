@@ -217,7 +217,7 @@ function updateAlert(anomaly,issues){
         `
     })
    if(anomaly===-1){
-        anomalyDisplay = Date.now() + 5000;
+        anomalyDisplay = Date.now() + 10000;
         alertBox.classList.remove("alert-healthy");
         alertBox.classList.add("alert-anomaly");
         alertBox.innerHTML=`

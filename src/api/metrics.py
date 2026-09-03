@@ -7,7 +7,6 @@ Register the blueprint in the main application.
 
 from flask import Blueprint,jsonify
 from flask import request
-from core.Telemetry.engine import TelemetryEngine
 from core.serializer import TelemetrySeralize
 from database.database import save_metric
 from database.analytics import system_analysis
@@ -25,17 +24,31 @@ ai_investigation_running = False
 ai_lock = threading.Lock()
 ai_latest_result=None
 
+latest_metric = None
+latest_anomaly = 0
+latest_summary = None
+latest_issues = []
+
 # Creating  a blueprint Instance
 metrics_bp = Blueprint('metrics_bp', __name__, url_prefix='/api/metrics')
 
-@metrics_bp.route("/live",methods=["GET"])
-def get_metrics():
+@metrics_bp.route("/telemetry",methods=["POST"]) 
+def receive_telemetry():
     start=time.time()
     global ai_investigation_running
     global ai_latest_result
+    global latest_metric
+    global latest_anomaly
+    global latest_summary
+    global latest_issues
     try:
         print("1. Capturing telemetry")
-        metric_payload=TelemetryEngine.capture_frame()
+        metric_payload=request.get_json()
+        if not metric_payload:
+            return jsonify({
+                "success":False,
+                "error":"No Telemetry data received"
+                }),400
         print("2. Telemetry captured")
         serialized_meterics=TelemetrySeralize.convert_data(metric_payload)
         print("3. Metrics serialized")
@@ -54,6 +67,10 @@ def get_metrics():
         print("6. Summary created")
         save_metric(serialized_meterics,anomaly)
         print("7. Metric saved")
+        latest_metric = serialized_meterics
+        latest_anomaly= anomaly
+        latest_summary = summary
+        latest_issues = issues
         if anomaly == -1:
             print("8. ANOMALY DETECTED → Getting processes")
             with ai_lock:
@@ -76,12 +93,11 @@ def get_metrics():
             "issues":issues,
             "database":"Done"
             }), 200
-
     except Exception as e:
-        return jsonify({
-                    "success":False,
-                    "error":str(e)
-                    }), 500
+            return jsonify({
+                        "success":False,
+                        "error":str(e)
+                        }), 500
 
 def run_ai(meteric,anomaly,issues):
     global ai_investigation_running
@@ -139,7 +155,38 @@ def get_ai():
                 "success":True,
                 "status":"healthy"
         })
+
+@metrics_bp.route("/live",methods=["GET"])
+def get_metrics():
+    start=time.time()
+    #global latest_metric
+    #global latest_anomaly
+    #global latest_summary
+    #global latest_issues
+    try:
+        if latest_metric is None:
+            return jsonify({
+                "success":False,
+                "message":"No Telemetry received from the agent."
+            }),404
         
+        return jsonify({
+            "success":True,
+            "time_taken":round((time.time()-start)*1000,2),
+            "metric":latest_metric,
+            "anomaly":latest_anomaly,
+            "summary":latest_summary,
+            "issues":latest_issues,
+            "database":"Done"
+            }), 200
+
+    except Exception as e:
+        return jsonify({
+                    "success":False,
+                    "error":str(e)
+                    }), 500
+
+
 
 @metrics_bp.route("/summary",methods=["GET"])
 def meterics_summary():

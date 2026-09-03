@@ -4,6 +4,7 @@ from api.status import status_bp
 from api.anomaly import anomaly_bp,set_model
 from database.database import create_Table,create_index
 from ai.ai_analytics import train_Model
+import os
 from database.history import get_training_data
 
 import time
@@ -62,7 +63,7 @@ def page_crashed_error(error):
 
 if __name__=="__main__":
     app.run(
-        host="127.0.0.1",
-        port=5000,
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
         debug=False
     )

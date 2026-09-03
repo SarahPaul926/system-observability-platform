@@ -1,17 +1,23 @@
 import psutil
+import time
 
 def get_process():
 
     process = []
-
+    for p in psutil.process_iter():
+            try:
+                p.cpu_percent(None)
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+    time.sleep(0.1)
     for p in psutil.process_iter():
 
         try:
-
+            
             process.append({
                 "process_id": p.pid,
                 "name": p.name(),
-                "cpu_percent": p.cpu_percent(interval=0.1),
+                "cpu_percent": p.cpu_percent(None),
                 "memory_percent": p.memory_percent()
             })
 
