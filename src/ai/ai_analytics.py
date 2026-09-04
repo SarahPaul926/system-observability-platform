@@ -37,8 +37,23 @@ def predict_live(model,live_vector):
     prediction=model.predict(live_data)
     return -1 if prediction[0]==-1 else 0
 
+def baseline_model():
+    model =  IsolationForest(contamination=0.10,random_state=45)
+    columns=["cpu_usage","ram_usage","disk_usage","network_sent","network_received"]
+    baseline_vector=[[0, 0, 0, 0, 0],
+        [10, 10, 10, 10, 10],
+        [20, 20, 20, 20, 20],
+        [30, 30, 30, 30, 30],
+        [40, 40, 40, 40, 40]]
+    baseline_data=pd.DataFrame(baseline_vector,columns=columns)
+    model.fit(baseline_data)
+    return model
+
 def train_Model(rawData):
     df=load_dataframe(rawData)
+    if df.empty:
+         print("No model for Isolation Forest to train on")
+         return baseline_model()
     model=excute_isolationForest(df)
     return model
 
@@ -104,17 +119,11 @@ def ai_summary(anomaly,issues):
 
 if __name__ == "__main__":
 
-    test_issues = [
-        {
-            "resource": "CPU",
-            "message": "CPU usage is critically high: 92%"
-        },
-        {
-            "resource": "RAM",
-            "message": "RAM usage is critically high: 88%"
-        }
-    ]
+    print("\nTesting empty training data...")
 
-    result =ai_summary(-1, test_issues)
+    empty_data = []
 
-    print(result)
+    model = train_Model(empty_data)
+
+    print("Model created successfully!")
+    print(model)
