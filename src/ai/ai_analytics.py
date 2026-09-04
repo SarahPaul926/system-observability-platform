@@ -84,46 +84,194 @@ def diagnose_system(meteric):
     if network_sent>100 or network_received >100 :
                 issues.append({
                     "resource":"Network Sent & Network Received",
-                    "message":f"Network Sent & Network Received usage is critically high: {network_sent} & {network_received}%"
+                    "message":f"Network activity is high:{network_sent} MB sent{network_received} MB received."
                 })
 
     return issues
 
 def ai_summary(anomaly,issues):
-    if anomaly==0:
-          return{
+    if not issues and anomaly==0:
+         return{
                "status":"Normal",
                "summary":"The System is currently operating normally. No sigificant anomalies were detected"
             }
-    if not issues:
-          return{
-                "status":"Anomaly",
-                "summary":"An unusual system behaviour was detected, but no specific resource issue was identified."
+    if issues and anomaly==0:
+        resources=[]
+        for issue in issues:
+                 resources.append(issue["resource"])
+        resources_text=",".join(resources)
+        summary=(f"High Resource usage has been detected in: {resources_text}.")
+        summary+=" ".join(issue["message"] for issue in issues)
+        summary+=(
+            " The system behaviour is not necessarily statistically anomalous, but the affected resource usage should be investigated.")
+        return{
+                "status":"Warning",
+                "summary":summary
             }
-    resources=[]
-    for issue in issues:
-         resources.append(issue["resource"])
+    if not issues and anomaly==1:
+         return {
+            "status": "Anomaly",
+            "summary": (
+                "Unusual system behaviour was detected, "
+                "but no specific resource issue was identified."
+            )
+        }
+    if issues and anomaly==1:
+        resources=[]
+        for issue in issues:
+                    resources.append(issue["resource"])
+        resources_text=",".join(resources)
+        summary=(f"A system anomaly has been detected. "
+            f"The affected resource(s) are: {resources_text}. ")
+        summary+=" ".join(issue["message"] for issue in issues)
+        summary=(f"An anomaly has been detected in the system." f"The affected resource(s) are: {resources_text}.")
+        summary+=" ".join(issue["message"] for issue in issues)
+        summary += (
+            " You may want to check running processes and applications that could be consuming excessive system resources."
+        )
+        return {
+                "status":"CRITICAL",
+                "summary":summary
+        }
+    
 
-    resources_text=",".join(resources)
-    summary=(f"An anomaly has been detected in the system." f"The affected resource(s) are: {resources_text}.")
-    summary+=" ".join(issue["message"] for issue in issues)
-
-    summary += (
-        " You may want to check running processes and applications that could be consuming excessive system resources."
-    )
-
-    return {
-         "status":"ANOMALY",
-         "summary":summary
-    }
+    
+    
 
 if __name__ == "__main__":
+    print("\n==============================")
+    print(" HELIOS DIAGNOSTIC TEST")
+    print("==============================")
 
-    print("\nTesting empty training data...")
+    # --------------------------------
+    # Test 1: Completely normal system
+    # --------------------------------
 
-    empty_data = []
+    normal_metric = {
+        "cpu": {
+            "cpu_usage": 40
+        },
+        "ram": {
+            "percent": 50
+        },
+        "disk": {
+            "disk_usage": 60
+        },
+        "network_activity": {
+            "network_sent": 20,
+            "network_received": 30
+        }
+    }
 
-    model = train_Model(empty_data)
+    issues = diagnose_system(normal_metric)
 
-    print("Model created successfully!")
-    print(model)
+    result = ai_summary(
+        anomaly=0,
+        issues=issues
+    )
+
+    print("\nTEST 1: NORMAL SYSTEM")
+    print("Issues:", issues)
+    print("Result:", result)
+
+
+    # --------------------------------
+    # Test 2: High CPU and RAM
+    # ML says normal
+    # --------------------------------
+
+    high_resource_metric = {
+        "cpu": {
+            "cpu_usage": 93.5
+        },
+        "ram": {
+            "percent": 92.3
+        },
+        "disk": {
+            "disk_usage": 60
+        },
+        "network_activity": {
+            "network_sent": 20,
+            "network_received": 30
+        }
+    }
+
+    issues = diagnose_system(high_resource_metric)
+
+    result = ai_summary(
+        anomaly=0,
+        issues=issues
+    )
+
+    print("\nTEST 2: HIGH CPU + RAM")
+    print("Issues:", issues)
+    print("Result:", result)
+
+
+    # --------------------------------
+    # Test 3: ML anomaly only
+    # --------------------------------
+
+    issues = []
+
+    result = ai_summary(
+        anomaly=1,
+        issues=issues
+    )
+
+    print("\nTEST 3: ML ANOMALY ONLY")
+    print("Issues:", issues)
+    print("Result:", result)
+
+
+    # --------------------------------
+    # Test 4: Both ML + diagnostics
+    # --------------------------------
+
+    issues = diagnose_system(high_resource_metric)
+
+    result = ai_summary(
+        anomaly=1,
+        issues=issues
+    )
+
+    print("\nTEST 4: CRITICAL")
+    print("Issues:", issues)
+    print("Result:", result)
+
+
+    # --------------------------------
+    # Test 5: High network activity
+    # --------------------------------
+
+    network_metric = {
+        "cpu": {
+            "cpu_usage": 40
+        },
+        "ram": {
+            "percent": 50
+        },
+        "disk": {
+            "disk_usage": 60
+        },
+        "network_activity": {
+            "network_sent": 150,
+            "network_received": 500
+        }
+    }
+
+    issues = diagnose_system(network_metric)
+
+    result = ai_summary(
+        anomaly=0,
+        issues=issues
+    )
+
+    print("\nTEST 5: HIGH NETWORK ACTIVITY")
+    print("Issues:", issues)
+    print("Result:", result)
+
+
+    print("\n==============================")
+    print(" TESTING COMPLETE")
+    print("==============================")
