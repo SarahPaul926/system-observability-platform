@@ -28,6 +28,7 @@ latest_metric = None
 latest_anomaly = 0
 latest_summary = None
 latest_issues = []
+connection_time=None
 
 # Creating  a blueprint Instance
 metrics_bp = Blueprint('metrics_bp', __name__, url_prefix='/api/metrics')
@@ -41,8 +42,10 @@ def receive_telemetry():
     global latest_anomaly
     global latest_summary
     global latest_issues
+    global connection_time
     try:
         print("1. Capturing telemetry")
+        connection_time=time.time()
         metric_payload=request.get_json()
         if not metric_payload:
             return jsonify({
@@ -159,15 +162,18 @@ def get_ai():
 @metrics_bp.route("/live",methods=["GET"])
 def get_metrics():
     start=time.time()
-    #global latest_metric
-    #global latest_anomaly
-    #global latest_summary
-    #global latest_issues
     try:
         if latest_metric is None:
             return jsonify({
                 "success":False,
+                "connection":False,
                 "message":"No Telemetry received from the agent."
+            }),404
+        if time.time()-connection_time > 15:
+            return jsonify({
+                "success":False,
+                "connection":False,
+                "message":"No recent activities."
             }),404
         
         return jsonify({
@@ -177,6 +183,7 @@ def get_metrics():
             "anomaly":latest_anomaly,
             "summary":latest_summary,
             "issues":latest_issues,
+            "connection":True,
             "database":"Done"
             }), 200
 
@@ -185,8 +192,6 @@ def get_metrics():
                     "success":False,
                     "error":str(e)
                     }), 500
-
-
 
 @metrics_bp.route("/summary",methods=["GET"])
 def meterics_summary():

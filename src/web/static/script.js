@@ -234,7 +234,7 @@ function updateAlert(anomaly,issues){
         alertBox.classList.remove("alert-anomaly");
         alertBox.innerHTML= `
         <div class="alert-healthy">
-            <h2>System Health is Good!</p>
+            <h2>No Anomaly Found!</p>
         </div>`;
     }
 }

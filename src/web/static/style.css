@@ -1,6 +1,11 @@
 *{
     box-sizing:border-box;
 }
+html,
+body {
+    min-height: 100%;
+    margin: 0;
+}
 body{
     background: linear-gradient(to left,
     #3e0d8e,
@@ -9,6 +14,9 @@ body{
     margin:0;
     font-family: Aldrich;
     height: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 .header{
     display:flex;
@@ -33,6 +41,7 @@ body{
     grid-template-columns: repeat(6,1fr);
     gap: 1rem;
     padding:20px;
+    flex: 1;
     grid-template-areas: 
     "alerts alerts alerts summary summary summary"
     "alerts alerts alerts summary summary summary"
@@ -194,4 +203,127 @@ canvas{
 
 .telmentry-table td {
     color: #ffffff;
+}
+
+.footer{
+    width:645%;
+    margin-top: 40px;
+    border-top: 1px solid;
+    background: linear-gradient(to top,#8065ad,#b152d45f);
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.footer h3{
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.footer p{
+    font-size: 15px;
+}
+
+.copy-right-text{
+    margin: 0;
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+/* =========================
+   TABLET RESPONSIVE
+   ========================= */
+
+@media (max-width: 1024px) {
+
+    .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+
+        grid-template-areas:
+        "alerts summary"
+        "cpu ram"
+        "disk network"
+        "avgCPU maxRam"
+        "chart1 chart1"
+        "chart2 chart2"
+        "chart3 chart3"
+        "chart4 chart4"
+        "ai-analysis ai-analysis"
+        "table table";
+    }
+
+    .footer{
+        width:205%;
+    }
+
+}
+
+
+/* =========================
+   MOBILE RESPONSIVE
+   ========================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 10px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .header h1 {
+        font-size: 36px;
+        margin: 20px 0 10px;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr;
+
+        grid-template-areas:
+        "alerts"
+        "summary"
+        "cpu"
+        "ram"
+        "disk"
+        "network"
+        "avgCPU"
+        "maxRam"
+        "chart1"
+        "chart2"
+        "chart3"
+        "chart4"
+        "ai-analysis"
+        "table";
+
+        padding: 10px;
+        gap: 12px;
+    }
+
+    .dashboard > * {
+        padding: 15px;
+        font-size: 15px;
+    }
+
+    #ramChart {
+        width: 220px !important;
+        height: 220px !important;
+    }
+
+    #overallPerformanceChart {
+        width: 280px !important;
+        height: 280px !important;
+    }
+
+    .telmentry-table {
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+
+    .footer{
+        width:100%;
+    }
+
 }

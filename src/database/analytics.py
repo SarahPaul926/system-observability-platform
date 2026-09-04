@@ -1,7 +1,6 @@
-# This Handles the calculations , reports and statistics
-import sqlite3 as sq
+from database.database import get_connection
 def system_analysis():
-    conn=sq.connect("telemetry_history.db")
+    conn=get_connection()
     cursor=conn.cursor()
     cursor.execute(""" 
                SELECT AVG(cpu_usage),
@@ -12,4 +11,10 @@ def system_analysis():
     cursor.close()
     conn.close()
     return {"average_cpu":avg_cpu,"maximum_ram":max_ram}
+
+if __name__ == "__main__":
+    print("------------System Analysis---------")
+    data=system_analysis()
+    print(data)
+    
 

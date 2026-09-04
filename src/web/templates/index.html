@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Helios</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/helios.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,115 +20,112 @@
 
    </header>
    <div class="dashboard">
-        <!-- The header Section -->
+      <!-- The header Section -->
+      <!-- AI and Alerts Section :
+         AI Status
+         Prediction
+         Confidence
+         Z-Score
+         Isolation Forest 
+         -->
+      <div class="alerts">
+         <h2>Anomaly Detection</h2>
+         <div id="alert-box"></div>
+      </div>
 
-         <!-- AI and Alerts Section :
-          AI Status
-          Prediction
-          Confidence
-          Z-Score
-          Isolation Forest 
-          -->
-         <div class="alerts">
-            <h2>Active Alerts</h2>
-            <div id="alert-box"></div>
-         </div>
+      <div class="summary">
+         <h2>Active Alerts</h2>
+         <div id="summary-card"></div>
+      </div>
+      
 
-         <div class="summary">
-            <h2>Anomaly Detection</h2>
-            <div id="summary-card"></div>
-         </div>
+      <!-- CPU/RAM/DISK/NETWORK CARDS SECTIONS  -->
+      
+      <div class="cpu">
+         <h2>CPU</h2>
+         <p id="cpu-reading">Loading....</p>
+      </div>
+
+      <div class="ram">
+         <h2>RAM</h2>
+         <p id="ram-reading">Loading....</p>
+      </div>
+
+      <div class="disk">
+         <h2>DISK</h2>
+         <p id="disk-reading">Loading....</p>
+      </div>
+
+      <div class="network">
+         <h2>NETWORK</h2>
+         <p id="network-reading">Loading....</p>
+      </div>
+
+      <div class="avgCPU">
+         <h2>AVG CPU</h2>
+         <p id="avgCpu-reading">Loading....</p>
+      </div>
+
+      <div class="maxRam">
+         <h2>MAX RAM</h2>
+         <p id="maxRam-reading">Loading....</p>
+      </div>
+
+         <!-- Charts  -->
          
-
-         <!-- CPU/RAM/DISK/NETWORK CARDS SECTIONS  -->
-         
-         <div class="cpu">
-            <h2>CPU</h2>
-            <p id="cpu-reading">Loading....</p>
+      <div class="chart1">
+         <h2>CPU Usage</h2>
+         <canvas id="cpuChart"></canvas>
+      </div>
+      
+      <div class="chart2">
+         <h2>RAM Usage</h2>
+         <div class="justify-center">
+            <canvas id="ramChart"></canvas>
          </div>
+      </div>
 
-         <div class="ram">
-            <h2>RAM</h2>
-            <p id="ram-reading">Loading....</p>
+      <div class="chart3">
+         <h2>Network</h2>
+         <canvas id="networkChart"></canvas>
+      </div>
+
+      <div class="chart4">
+         <h2>Overall Performance</h2>
+         <div class="justify-center">
+            <canvas id="overallPerformanceChart"></canvas>
          </div>
+      </div>
 
-         <div class="disk">
-            <h2>DISK</h2>
-            <p id="disk-reading">Loading....</p>
-         </div>
+      <div class="ai-analysis">
+         <h2>AI Analysis</h2>
+         <p id="aiAnalysis"></p>
+      </div>
 
-         <div class="network">
-            <h2>NETWORK</h2>
-            <p id="network-reading">Loading....</p>
-         </div>
-
-         <div class="avgCPU">
-            <h2>AVG CPU</h2>
-            <p id="avgCpu-reading">Loading....</p>
-         </div>
-
-         <div class="maxRam">
-            <h2>MAX RAM</h2>
-            <p id="maxRam-reading">Loading....</p>
-         </div>
-
-          <!-- Charts  -->
-          
-         <div class="chart1">
-            <h2>CPU Usage</h2>
-            <canvas id="cpuChart"></canvas>
-         </div>
-         
-         <div class="chart2">
-            <h2>RAM Usage</h2>
-            <div class="justify-center">
-               <canvas id="ramChart"></canvas>
-            </div>
-         </div>
-
-         <div class="chart3">
-            <h2>Network</h2>
-            <canvas id="networkChart"></canvas>
-         </div>
-
-         <div class="chart4">
-            <h2>Overall Performance</h2>
-            <div class="justify-center">
-               <canvas id="overallPerformanceChart"></canvas>
-            </div>
-         </div>
-
-         <div class="ai-analysis">
-            <h2>AI Analysis</h2>
-            <p id="aiAnalysis"></p>
-         </div>
-
-         <div class="telmentry-table">
-            <table>
-               <thead>
-                  <tr>
-                     <th>Time</th>
-                     <th>CPU</th>
-                     <th>RAM</th>
-                     <th>DISK</th>
-                     <th>Network Sent</th>
-                     <th>Network Recieved</th>
-                  </tr>
-               </thead>
-               <tbody id="telmentry-table-body">
-                  <!-- JavaScript will insert rows here -->
-               </tbody>
-            </table>
-         </div>
-
-         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-      </div>    
-      <footer>
-         
-      </footer>
-
-    </div>     
-    <script src="{{url_for('static',filename='script.js')}}"></script>
+      <div class="telmentry-table">
+         <table>
+            <thead>
+               <tr>
+                  <th>Time</th>
+                  <th>CPU</th>
+                  <th>RAM</th>
+                  <th>DISK</th>
+                  <th>Network Sent</th>
+                  <th>Network Recieved</th>
+               </tr>
+            </thead>
+            <tbody id="telmentry-table-body">
+               <!-- JavaScript will insert rows here -->
+            </tbody>
+         </table>
+      </div>
+   </div> 
+   <footer class="footer">
+      <h3>HELIOS</h3>
+      <p>Intelligent System Observability & Anomaly Detection Platform</p>
+      <p class="copy-right-text">© 2026 HELIOS. All rights reserved.</p>
+   </footer>    
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
+   <script src="{{url_for('static',filename='script.js')}}"></script>
 </body>
 </html>
