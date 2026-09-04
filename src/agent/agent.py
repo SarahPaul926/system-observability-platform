@@ -1,7 +1,7 @@
 from core.Telemetry.engine import TelemetryEngine
 import time
 import requests
-API_URL = "http://127.0.0.1:5000/api/metrics/telemetry"
+API_URL = "https://helios-observability.onrender.com/api/metrics/telemetry"
 while True:
     telemetry=TelemetryEngine.capture_frame()
     print("Collected telemetry:")
