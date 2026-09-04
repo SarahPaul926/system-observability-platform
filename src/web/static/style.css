@@ -36,12 +36,10 @@ body{
 }
 .dashboard{
     display:grid;
-    max-height: 100vh;
     font-family:Aldrich;
     grid-template-columns: repeat(6,1fr);
     gap: 1rem;
     padding:20px;
-    flex: 1;
     grid-template-areas: 
     "alerts alerts alerts summary summary summary"
     "alerts alerts alerts summary summary summary"
